@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>goTube</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="menu-btn" id="menu-toggle-btn" title="Menu"><i class="material-icons">menu</i></button>
+            <div class="logo" id="logo-home">
+                <img src="../assets/icon.png" alt="goTube Icon" style="width: 28px; height: 28px; margin-right: 4px; object-fit: contain;">
+                <span>goTube</span>
+            </div>
+        </div>
+        <div class="nav-center">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Pesquisar videos locais...">
+                <button class="search-btn" id="search-btn"><i class="material-icons">search</i></button>
+            </div>
+        </div>
+        <div class="nav-right">
+            <button class="icon-btn" id="download-btn" title="Baixar Novo Video"><i class="material-icons">file_download</i></button>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <aside class="sidebar" id="sidebar">
+            <ul class="nav-links">
+                <li class="active" data-page="home"><i class="material-icons">home</i> <span>Inicio</span></li>
+                <li data-page="history"><i class="material-icons">history</i> <span>Historico</span></li>
+            </ul>
+        </aside>
+
+        <!-- Pagina: Feed Principal -->
+        <main class="content" id="page-home">
+            <div class="categories" id="categories-bar">
+                <button class="category active" data-tag="all">Tudo</button>
+            </div>
+            
+            <div class="video-grid" id="feed-container">
+                <!-- Preenchido dinamicamente pelo renderer.js -->
+            </div>
+
+            <div class="empty-state" id="empty-state" style="display:none;">
+                <i class="material-icons empty-icon">video_library</i>
+                <h2>Nenhum video na biblioteca</h2>
+                <p>Clique no botao de download para adicionar seus primeiros videos!</p>
+                <button class="cta-btn" id="empty-download-btn">
+                    <i class="material-icons">file_download</i> Baixar Video
+                </button>
+            </div>
+        </main>
+
+        <!-- Pagina: Player de Video -->
+        <main class="content player-page" id="page-player" style="display:none;">
+            <div class="player-layout">
+                <div class="player-main">
+                    <div class="video-player-wrapper">
+                        <video id="video-player" controls autoplay></video>
+                    </div>
+                    <div class="player-info">
+                        <h1 id="player-title"></h1>
+                        <div class="player-meta">
+                            <div class="channel-avatar-small" id="player-channel-avatar" style="margin-right: 8px;">D</div>
+                            <span id="player-channel" class="player-channel"></span>
+                            <span class="meta-separator"></span>
+                            <span id="player-date" class="player-date"></span>
+                        </div>
+                        <div class="player-actions">
+                            <button class="action-btn" id="like-btn" title="Like">
+                                <i class="material-icons" id="like-icon">thumb_up_off_alt</i>
+                                <span id="like-count">0</span>
+                            </button>
+                            <button class="action-btn" id="dislike-btn" title="Dislike">
+                                <i class="material-icons" id="dislike-icon">thumb_down_off_alt</i>
+                            </button>
+                            <div style="width: 1px; height: 24px; background-color: var(--border-color); margin: 0 8px;"></div>
+                            <button class="action-btn" id="edit-video-btn" title="Editar"><i class="material-icons">edit</i> Editar</button>
+                            <button class="action-btn delete-btn" id="delete-video-btn" title="Deletar"><i class="material-icons">delete</i> Deletar</button>
+                        </div>
+                        <div class="player-description" id="player-description"></div>
+                    </div>
+                </div>
+                <aside class="recommendations-sidebar">
+                    <h3>Recomendados</h3>
+                    <div id="recommendations-list"></div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Download -->
+    <div id="download-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="modal-close">&times;</span>
+            <h2><i class="material-icons" style="vertical-align: middle; margin-right:8px;">file_download</i>Baixar Video</h2>
+            <label class="input-label">URL do YouTube</label>
+            <input type="text" id="youtube-url" placeholder="https://www.youtube.com/watch?v=...">
+            <label class="input-label">Qualidade do Video</label>
+            <select id="download-quality">
+                <option value="1080p">1080p (Full HD)</option>
+                <option value="720p" selected>720p (HD)</option>
+                <option value="480p">480p</option>
+                <option value="360p">360p</option>
+                <option value="144p">144p</option>
+            </select>
+            <p class="quality-note">O audio sera baixado automaticamente na melhor qualidade disponivel.</p>
+            <button id="start-download-btn">
+                <i class="material-icons" style="vertical-align: middle; margin-right:4px; font-size:18px;">download</i> Iniciar Download
+            </button>
+            <div class="download-progress-area" id="download-progress-area" style="display:none;">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="download-progress-bar"></div>
+                </div>
+                <p id="download-status" class="status-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edicao -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="edit-modal-close">&times;</span>
+            <h2><i class="material-icons" style="vertical-align: middle; margin-right:8px;">edit</i>Editar Vídeo</h2>
+            
+            <label class="input-label">Título</label>
+            <input type="text" id="edit-title" placeholder="Título do vídeo">
+            
+            <label class="input-label">Descrição</label>
+            <textarea id="edit-description" placeholder="Descrição do vídeo" rows="4" style="padding: 12px; background-color: var(--search-bg); border: 1px solid var(--search-border); color: var(--text-color); border-radius: 8px; font-size: 14px; outline: none; font-family: 'Roboto', sans-serif; resize: vertical;"></textarea>
+            
+            <label class="input-label">Ícone do Canal</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button id="change-avatar-btn" style="background-color: var(--hover-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                    <i class="material-icons" style="font-size: 18px;">image</i> Selecionar Imagem
+                </button>
+                <span id="avatar-status" style="font-size: 12px; color: var(--text-secondary);">Opcional</span>
+            </div>
+
+            <button id="save-edit-btn" style="background-color: var(--accent-blue); color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: 500; cursor: pointer; font-size: 16px; margin-top: 16px;">Salvar Alterações</button>
+        </div>
+    </div>
+
+    <script src="scripts/renderer.js"></script>
+</body>
+</html>
