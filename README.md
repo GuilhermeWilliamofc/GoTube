@@ -28,6 +28,27 @@ O **goTube** é um player e organizador de biblioteca de vídeos local focado em
 
 ---
 
+## 📸 Capturas de Tela
+
+<div align="center">
+
+### Página Inicial (Feed da Biblioteca)
+<img src="app/assets/screenshot_homepage.png" alt="Feed da Biblioteca" width="85%" />
+
+<br/><br/>
+
+### Player Integrado de Vídeo
+<img src="app/assets/screenshot_player.png" alt="Player de Vídeo" width="85%" />
+
+<br/><br/>
+
+### Importador de Mídia
+<img src="app/assets/screenshot_downloader.png" alt="Modal de Download" width="55%" />
+
+</div>
+
+---
+
 ## 🛠️ Stack Tecnológica
 
 - **Frontend / Aplicação:** [Electron.js](https://www.electronjs.org/) (HTML5, CSS3 moderno com tema escuro, JavaScript Vanilla).
