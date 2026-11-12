@@ -5,8 +5,10 @@ class VideoModel {
     constructor(dataDir) {
         this.dataDir = dataDir;
         this.dbPath = path.join(dataDir, 'library.json');
+        this.channelAvatarsPath = path.join(dataDir, 'channel_avatars.json');
         this._ensureDataDir();
         this.library = this._load();
+        this.channelAvatars = this._loadChannelAvatars();
     }
 
     _ensureDataDir() {
@@ -34,6 +36,27 @@ class VideoModel {
             fs.writeFileSync(this.dbPath, json, 'utf-8');
         } catch (err) {
             console.error('Erro ao salvar library.json:', err.message);
+        }
+    }
+
+    _loadChannelAvatars() {
+        try {
+            if (fs.existsSync(this.channelAvatarsPath)) {
+                const raw = fs.readFileSync(this.channelAvatarsPath, 'utf-8');
+                return JSON.parse(raw);
+            }
+        } catch (err) {
+            console.error('Erro ao carregar channel_avatars.json:', err.message);
+        }
+        return {}; // { "NomeDoCanal": "caminho/relativo/avatar.jpg" }
+    }
+
+    _saveChannelAvatars() {
+        try {
+            const json = JSON.stringify(this.channelAvatars, null, 2);
+            fs.writeFileSync(this.channelAvatarsPath, json, 'utf-8');
+        } catch (err) {
+            console.error('Erro ao salvar channel_avatars.json:', err.message);
         }
     }
 
@@ -71,6 +94,19 @@ class VideoModel {
             userInteraction: metadata.userInteraction || null, // 'like' | 'dislike' | null
             lastWatched: metadata.lastWatched || null
         };
+
+        // Se o vídeo tem um avatar, registrar no banco de avatares de canal
+        if (sanitized.channelAvatarRelative && sanitized.channel) {
+            this.setChannelAvatar(sanitized.channel, sanitized.channelAvatarRelative);
+        }
+
+        // Se o vídeo não tem avatar mas o canal já tem um registrado, usar o avatar do canal
+        if (!sanitized.channelAvatarRelative && sanitized.channel) {
+            const channelAvatar = this.getChannelAvatar(sanitized.channel);
+            if (channelAvatar) {
+                sanitized.channelAvatarRelative = channelAvatar;
+            }
+        }
 
         // Verificar se ja existe (evitar duplicatas)
         const existingIdx = this.library.findIndex(v => v.id === sanitized.id);
@@ -115,6 +151,51 @@ class VideoModel {
             return this.library[idx];
         }
         return null;
+    }
+
+    /**
+     * Define o avatar para um canal específico.
+     * Quando um avatar é definido, ele é aplicado a todos os vídeos daquele canal.
+     */
+    setChannelAvatar(channelName, avatarRelativePath) {
+        if (!channelName) return;
+        
+        // Salvar o avatar no banco de avatares de canal
+        this.channelAvatars[channelName] = avatarRelativePath;
+        this._saveChannelAvatars();
+        
+        // Aplicar o avatar a todos os vídeos deste canal que não têm avatar próprio
+        let updated = false;
+        this.library.forEach((video, idx) => {
+            if (video.channel === channelName) {
+                this.library[idx].channelAvatarRelative = avatarRelativePath;
+                updated = true;
+            }
+        });
+        
+        if (updated) {
+            this._save();
+        }
+        
+        return true;
+    }
+
+    /**
+     * Obtém o avatar registrado para um canal.
+     */
+    getChannelAvatar(channelName) {
+        return this.channelAvatars[channelName] || null;
+    }
+
+    /**
+     * Lista todos os canais únicos da biblioteca.
+     */
+    getAllChannels() {
+        const channels = new Set();
+        this.library.forEach(v => {
+            if (v.channel) channels.add(v.channel);
+        });
+        return Array.from(channels).sort();
     }
 
     removeVideo(videoId) {

@@ -442,7 +442,11 @@ document.addEventListener('DOMContentLoaded', () => {
     ipcRenderer.on('avatar-picked', (event, response) => {
         const status = document.getElementById('avatar-status');
         if (response.success) {
-            status.textContent = "Ícone selecionado!";
+            if (response.channel && response.message) {
+                status.textContent = response.message;
+            } else {
+                status.textContent = "Ícone selecionado!";
+            }
             status.style.color = "#4caf50";
         } else {
             status.textContent = "Erro ao selecionar";
@@ -525,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Modo Home (Tudo)
                 document.getElementById('empty-state').querySelector('h2').textContent = 'Sua biblioteca esta vazia';
-                document.getElementById('empty-state').querySelector('p').textContent = 'Comece a baixar videos usando o botao acima para construir seu proprio YouTube offline.';
+                document.getElementById('empty-state').querySelector('p').textContent = 'Comece a baixar videos usando o botao acima para construir sua biblioteca de midia offline.';
                 renderFeed(allVideos);
             }
         }

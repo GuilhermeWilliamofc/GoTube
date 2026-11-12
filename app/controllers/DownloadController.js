@@ -207,12 +207,20 @@ class DownloadController {
 
                 try {
                     fs.copyFileSync(srcPath, destPath);
-                    // Atualizar metadados
+                    
+                    // Criar caminho relativo para o avatar
                     const avatarRelative = path.join(video.folderName, destFileName);
-                    video.channelAvatarRelative = avatarRelative;
-                    this.videoModel.addVideo(video); // Salva no JSON
+                    
+                    // Registrar avatar no sistema de avatares compartilhados
+                    // Isso aplica o avatar a TODOS os vídeos do mesmo canal
+                    this.videoModel.setChannelAvatar(video.channel, avatarRelative);
 
-                    event.reply('avatar-picked', { success: true, avatarRelative });
+                    event.reply('avatar-picked', { 
+                        success: true, 
+                        avatarRelative,
+                        channel: video.channel,
+                        message: `Avatar aplicado a todos os vídeos do canal "${video.channel}"`
+                    });
                     event.reply('all-videos', this.videoModel.getAllVideos());
                 } catch (err) {
                     event.reply('avatar-picked', { success: false, error: err.message });

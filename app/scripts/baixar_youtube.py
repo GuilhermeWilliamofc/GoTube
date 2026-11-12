@@ -21,7 +21,7 @@ downloads_base = sys.argv[3] if len(sys.argv) > 3 else "Downloads"
 # Qualidades permitidas em ordem de prioridade (fallback)
 QUALIDADES_PERMITIDAS = ["1080p", "720p", "480p", "360p", "144p"]
 
-def on_progress(stream, chunk, bytes_remaining):
+def custom_progress(stream, chunk, bytes_remaining):
     total_size = stream.filesize
     bytes_downloaded = total_size - bytes_remaining
     if total_size > 0:
@@ -91,8 +91,32 @@ def escolher_qualidade(video, qualidade_desejada):
         print(f"QUALITY:{stream.resolution}", flush=True)
     return stream
 
+def criar_instancia_youtube(url):
+    """Cria instancia do YouTube testando clientes alternativos em caso de deteccao de bot."""
+    # Clientes InnerTube suportados pelo pytubefix (tenta default, WEB, MWEB, VISION_OS, ANDROID_VR)
+    clientes = [None, 'WEB', 'MWEB', 'VISION_OS', 'ANDROID_VR']
+    ultimo_erro = None
+    
+    for cliente in clientes:
+        try:
+            kwargs = {'on_progress_callback': custom_progress}
+            if cliente:
+                kwargs['client'] = cliente
+            yt = YouTube(url, **kwargs)
+            # Acessa o titulo para validar a requisicao e detectar bloqueios de bot
+            _ = yt.title
+            return yt
+        except Exception as e:
+            ultimo_erro = e
+            continue
+            
+    if ultimo_erro:
+        raise ultimo_erro
+    raise Exception("Nao foi possivel inicializar o download do YouTube.")
+
 def criarpastavideo(url):
-    video = YouTube(url, on_progress_callback=on_progress)
+    video = criar_instancia_youtube(url)
+    
     title = video.title
     title_sanitizado = sanitizar_nome(title)
     
@@ -114,8 +138,29 @@ def criarpastavideo(url):
             print(f"THUMBNAIL:{thumb_relative}", flush=True)
         except Exception:
             pass
+    
+    # Tentar baixar avatar do canal
+    avatar_relative = None
+    avatar_path = os.path.join(pasta_download, 'channel_avatar.jpg')
+    try:
+        # Tenta obter URL do avatar do canal via pytubefix
+        if hasattr(video, 'channel_url') and video.channel_url:
+            # Construir URL do avatar baseado no channel_id
+            # Formato: https://yt3.ggpht.com/ytc/channel_id
+            channel_id = video.channel_id if hasattr(video, 'channel_id') else None
+            if channel_id:
+                # YouTube usa varios tamanhos, s800 eh alta resolucao
+                avatar_url = f"https://yt3.ggpht.com/ytc/{channel_id}=s800-c-k-c0x00ffffff-no-rj"
+                req = urllib.request.Request(avatar_url, headers={'User-Agent': 'Mozilla/5.0'})
+                with urllib.request.urlopen(req, timeout=10) as response, open(avatar_path, 'wb') as out_file:
+                    out_file.write(response.read())
+                avatar_relative = os.path.join(pasta_nome, 'channel_avatar.jpg')
+                print(f"CHANNEL_AVATAR:{avatar_relative}", flush=True)
+    except Exception:
+        # Se falhar, nao tem problema - usuario pode adicionar manualmente
+        pass
             
-    return pasta_download, pasta_nome, title, video, thumb_relative
+    return pasta_download, pasta_nome, title, video, thumb_relative, avatar_relative
 
 def combinar_video_audio(video_path, audio_path, output_path, ffmpeg_path):
     print("STATUS:Combinando audio e video...", flush=True)
@@ -164,7 +209,7 @@ def baixar(video, title, pasta, ffmpeg_path, qualidade_desejada):
 ffmpeg_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'ffmpeg.exe')
 
 try:
-    pasta_download, pasta_nome, title, video, thumb_relative = criarpastavideo(url)
+    pasta_download, pasta_nome, title, video, thumb_relative, avatar_relative = criarpastavideo(url)
     final_path = baixar(video, title, pasta_download, ffmpeg_path, qualidade)
     
     if final_path:
@@ -189,7 +234,7 @@ try:
             "filePath": final_path,
             "folderName": pasta_nome,
             "thumbnailRelative": thumb_relative or "",
-            "channelAvatarRelative": "", # Deixamos vazio para o Frontend usar o avatar inicial gerado
+            "channelAvatarRelative": avatar_relative or "",
             "downloadDate": datetime.now().isoformat(),
             "url": url,
             "tags": list(video.keywords) if hasattr(video, 'keywords') and video.keywords else [],

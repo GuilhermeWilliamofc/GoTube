@@ -1,11 +1,12 @@
 {
   "name": "gotube",
   "version": "1.0.0",
-  "description": "O **goTube** é um player de vídeos local focado em oferecer uma experiência idêntica à do YouTube, mas funcionando totalmente offline. Todo o conteúdo é consumido de uma biblioteca local (vídeos previamente baixados), e o aplicativo constrói automaticamente um feed, páginas de vídeo e um sistema de recomendações baseado nos metadados desses vídeos.",
+  "description": "O **goTube** é um player e organizador de biblioteca de mídia local focado em oferecer uma experiência fluida de streaming offline. Todo o conteúdo é gerenciado localmente, construindo automaticamente feed, categorização por tags e recomendações inteligentes.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder",
+    "fix-download": "python -m pip install --upgrade pytubefix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "build": {
