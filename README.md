@@ -114,4 +114,4 @@ npm run fix-download
 
 ## 📄 Licença
 
-Este projeto é desenvolvido para fins educacionais, de estudo e preservação pessoal sob a licença MIT.
+Este projeto é desenvolvido para fins educacionais, de estudo e preservação pessoal sob a licença [MIT](LICENSE).
