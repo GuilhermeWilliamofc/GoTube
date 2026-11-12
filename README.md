@@ -2,6 +2,8 @@
 
 O **goTube** é um player e organizador de biblioteca de vídeos local focado em oferecer uma experiência fluida de streaming para mídia offline. Todo o conteúdo é gerenciado a partir de uma biblioteca local (vídeos previamente importados ou adicionados à coleção), e o aplicativo constrói automaticamente um feed, páginas de reprodução, categorização por tags e um sistema de recomendações inteligente baseado nos metadados da sua coleção.
 
+> **💡 Inspiração:** O nome e a proposta do projeto prestam uma singela homenagem ao conceito do antigo *YouTube Go* (aplicativo mobile descontinuado em 2022, criado originalmente para permitir o consumo offline de vídeos com escolha consciente de qualidade). O **goTube** resgata essa ideia de independência de conexão e a expande para o desktop, permitindo que você construa sua própria biblioteca pessoal permanente.
+
 ---
 
 ## 🚀 Principais Funcionalidades
@@ -34,8 +36,8 @@ O **goTube** é um player e organizador de biblioteca de vídeos local focado em
 
 ### 1. Clonar o Repositório
 ```bash
-git clone <URL_DO_REPOSITORIO>
-cd gotube
+git clone https://github.com/GuilhermeWilliamofc/GoTube.git
+cd GoTube
 ```
 
 ### 2. Instalar as Dependências do Node.js
@@ -77,4 +79,4 @@ npm run fix-download
 
 ## 📄 Licença
 
-Este projeto é desenvolvido para fins de estudo e uso pessoal sob a licença ISC.
+Este projeto é desenvolvido para fins educacionais, de estudo e preservação pessoal sob a licença ISC.
