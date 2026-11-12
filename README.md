@@ -6,7 +6,7 @@
 
 [![Latest Version](https://img.shields.io/github/v/release/GuilhermeWilliamofc/GoTube?include_prereleases&color=brightgreen)](https://github.com/GuilhermeWilliamofc/GoTube/releases)
 [![Total Downloads](https://img.shields.io/github/downloads/GuilhermeWilliamofc/GoTube/total?color=brightgreen)](https://github.com/GuilhermeWilliamofc/GoTube/releases)
-[![GitHub License](https://img.shields.io/github/license/GuilhermeWilliamofc/GoTube?color=brightgreen)](https://github.com/GuilhermeWilliamofc/GoTube/blob/main/LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen)](https://github.com/GuilhermeWilliamofc/GoTube/blob/main/LICENSE)
 
 **Player e organizador de biblioteca de mídia local e offline**
 
