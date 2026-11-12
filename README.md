@@ -43,7 +43,7 @@ O **goTube** é um player e organizador de biblioteca de vídeos local focado em
 <br/><br/>
 
 ### Importador de Mídia
-<img src="app/assets/screenshot_downloader.png" alt="Modal de Download" width="55%" />
+<img src="app/assets/screenshot_downloader.png" alt="Modal de Download" width="85%" />
 
 </div>
 
