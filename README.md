@@ -1,4 +1,14 @@
+<div align="center">
+
+<img src="app/assets/icon.png" alt="goTube Logo" width="120" />
+
 # goTube
+
+**Player e organizador de biblioteca de mídia local e offline**
+
+</div>
+
+---
 
 O **goTube** é um player e organizador de biblioteca de vídeos local focado em oferecer uma experiência fluida de streaming para mídia offline. Todo o conteúdo é gerenciado a partir de uma biblioteca local (vídeos previamente importados ou adicionados à coleção), e o aplicativo constrói automaticamente um feed, páginas de reprodução, categorização por tags e um sistema de recomendações inteligente baseado nos metadados da sua coleção.
 
